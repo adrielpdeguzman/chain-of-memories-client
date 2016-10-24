@@ -6,18 +6,27 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    userInfo: {},
+    accessToken: '',
+
     isLoading: false,
-    access_token: '',
 
     modalShow: false,
   },
 
   mutations: {
     /**
-     * Assign/revoke the access_token.
+     * Assign/revoke the access token.
      */
-    setToken(state, payload) {
-      state.access_token = payload.access_token;
+    setAccessToken(state, payload) {
+      state.accessToken = payload.accessToken;
+    },
+
+    /**
+     * Set the current user's basic information.
+     */
+    setUserInfo(state, payload) {
+      state.userInfo = payload.userInfo;
     },
 
     /**
@@ -36,7 +45,27 @@ export default new Vuex.Store({
   },
 
   actions: {
+    /**
+     * Commit the current access token, and then fetch the user's info.
+     */
+    fetchUserInfoFromToken({ commit }, payload) {
+      let userInfo = {};
+      commit({
+        type: 'setAccessToken',
+        accessToken: payload.accessToken,
+      });
 
+      if (payload.accessToken) {
+        Vue.http.get('/api/v1/users/me').then(({ body }) => {
+          userInfo = body;
+        }).finally(() => {
+          commit({
+            userInfo,
+            type: 'setUserInfo',
+          });
+        });
+      }
+    },
   },
 
   getters: {
@@ -44,7 +73,7 @@ export default new Vuex.Store({
      * Check if the current user is authenticated.
      */
     isAuthenticated(state) {
-      return state.access_token && cookie.get('access_token');
+      return state.accessToken && cookie.get('access_token');
     },
   },
 });

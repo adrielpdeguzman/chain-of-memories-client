@@ -27,7 +27,7 @@
 <script>
 import moment from 'moment';
 import cookie from 'js-cookie';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapMutations, mapActions } from 'vuex';
 
 export default {
   name: 'App',
@@ -51,10 +51,7 @@ export default {
    * Prepare the component.
    */
   created() {
-    this.$store.commit({
-      type: 'setToken',
-      access_token: cookie.get('access_token') || '',
-    });
+    this.fetchUserInfoFromToken({ accessToken: cookie.get('access_token') || '' });
   },
 
   methods: {
@@ -68,10 +65,7 @@ export default {
       };
       this.$http.post('/auth/login', credentials).then(({ body }) => {
         cookie.set('access_token', body.token, { expires: this.loginForm.remember ? moment.unix(body.expires).day() : '' });
-        this.$store.commit({
-          type: 'setToken',
-          access_token: body.token,
-        });
+        this.fetchUserInfoFromToken({ accessToken: body.token });
       }, () => {
         this.loginForm.username = '';
         this.loginForm.password = '';
@@ -84,11 +78,18 @@ export default {
      */
     logout() {
       cookie.remove('access_token');
-      this.$store.commit({
-        type: 'setToken',
-        access_token: '',
-      });
+      this.setAccessToken({ accessToken: '' });
+      this.setUserInfo({ userInfo: {} });
     },
+
+    ...mapMutations([
+      'setAccessToken',
+      'setUserInfo',
+    ]),
+
+    ...mapActions([
+      'fetchUserInfoFromToken',
+    ]),
   },
 
   computed: {

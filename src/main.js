@@ -18,7 +18,7 @@ Vue.use(VueRouter);
 Vue.use(VueResource);
 Vue.http.interceptors.push((req, next) => {
   _.set(req.headers, 'map', {
-    Authorization: [`Bearer ${store.state.access_token}`],
+    Authorization: [`Bearer ${store.state.accessToken}`],
     'X-CSRF-TOKEN': [window.document.querySelector('meta[name=x-csrf-token]').content],
   });
   store.commit('toggleLoading');
