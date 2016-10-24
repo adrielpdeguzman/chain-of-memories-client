@@ -1,4 +1,9 @@
 module.exports = {
+  'env': {
+    'browser': true,
+    'node': true,
+  },
+
   root: true,
   parser: 'babel-eslint',
   parserOptions: {
@@ -25,6 +30,9 @@ module.exports = {
       'vue': 'never'
     }],
     // allow debugger during development
-    'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0
-  }
+    'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
+
+    // disable assignment to property of function parameter
+    'no-param-reassign': 0,
+  },
 }
