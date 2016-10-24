@@ -8,6 +8,8 @@ export default new Vuex.Store({
   state: {
     isLoading: false,
     access_token: '',
+
+    modalShow: false,
   },
 
   mutations: {
@@ -16,6 +18,13 @@ export default new Vuex.Store({
      */
     setToken(state, payload) {
       state.access_token = payload.access_token;
+    },
+
+    /**
+     * Show/hide the app modal.
+     */
+    setModalShow(state, payload) {
+      state.modalShow = payload.modalShow;
     },
 
     /**
